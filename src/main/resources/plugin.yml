@@ -1,0 +1,9 @@
+name: "DeepStore"
+main: "com.sxtanna.mc.PluginDeepStore"
+
+version: "@version@"
+website: "https://www.sxtanna.com"
+authors: ["Sxtanna"]
+
+api-version: "1.13"
+description: "Deep storage within single blocks"
