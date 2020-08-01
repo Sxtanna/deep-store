@@ -1,0 +1,55 @@
+name: Release From Dev Build
+
+on:
+  push:
+    branches: [master]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up JDK 1.8
+        uses: actions/setup-java@v1
+        with:
+          java-version: 1.8
+
+      - name: Set up Gradle
+        run: chmod +x gradlew
+
+      - name: Build Gradle Artifact
+        run: gradle build
+
+      - name: Resolve version
+        id: resolved
+        run: |
+          cd ./build/libs
+          echo ::set-output name=tag::$(find . -type f -print -quit | awk -F'[-]' '{print $3}')
+
+      - name: Create Release
+        uses: actions/create-release@v1
+        id: create_release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.run_number  }}
+          release_name: Release ${{ steps.resolved.outputs.tag }}
+          draft: false
+          prerelease: false
+
+      - name: Create Zip of files
+        working-directory: './build/libs'
+        run: zip deep-store-${{ steps.resolved.outputs.tag }}.zip *.jar
+
+      - name: Upload Release Asset
+        uses: actions/upload-release-asset@v1
+        id: upload-release-asset
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: 'build/libs/deep-store-${{ steps.resolved.outputs.tag }}.zip'
+          asset_name: deep-store-${{ steps.resolved.outputs.tag }}.zip
+          asset_content_type: application/zip
