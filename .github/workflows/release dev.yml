@@ -35,8 +35,8 @@ jobs:
           prerelease: true
 
       - name: Create Zip of files
-          working-directory: ./build/libs
-          run: zip deep-store-${{ github.ref }}.zip *.jar
+        working-directory: './build/libs'
+        run: zip deep-store-${{ github.ref }}.zip *.jar
 
       - name: Upload Release Asset
         uses: actions/upload-release-asset@v1
