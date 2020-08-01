@@ -22,7 +22,9 @@ jobs:
 
       - name: Resolve version
         id: resolved
-        run: echo ::set-output name=tag::${find . -type f -print -quit | awk -F'[-]' '{print $3}'}
+        run: |
+        cd ./build/libs
+        echo ::set-output name=tag::$(find . -type f -print -quit | awk -F'[-]' '{print $3}')
 
       - name: Create Release
         uses: actions/create-release@v1
